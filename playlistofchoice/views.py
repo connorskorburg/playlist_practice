@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
+import spotipy.util as util
+import sys
+
 # Create your views here.
 
 # RENDER TEMPLATES
@@ -10,6 +13,14 @@ def home(request):
     print(" Home Page is Invoked Successfully ")
 
     return render(request,'index.html')
+
+def sign_in(request):
+    username = request.POST['username']
+    cid = '93d03c51a99146ed992ca0175f68674b'
+    secret = '92a2119255fb489bbfe6e2a054f8c4b5'
+    client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
+    token = util.prompt_for_user_token(username, scope='playlist-modify-public', client_id=cid, client_secret=secret, redirect_uri= 'localhost:8000')
+    return redirect('/')
 
 # track results
 def track_results(request):

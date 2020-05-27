@@ -10,12 +10,14 @@
 </head>
 <body>
     <h3 class="text-center p-3">New Releases</h3>
-    <div class="img-div">
+    <div class="img-div w-50">
         <img src="{{new_releases_list.0.image_url}}" class="top" alt="">
         <img src="{{new_releases_list.1.image_url}}" class="top" alt="">
         <img src="{{new_releases_list.2.image_url}}" class="bottom" alt="">
         <img src="{{new_releases_list.3.image_url}}" class="bottom" alt="">
-        <iframe src="https://open.spotify.com/embed/album/{{ new_releases_list.0.album_id }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+        <div class="play">
+            <iframe src="https://open.spotify.com/embed/album/{{ new_releases_list.0.album_id }}" width="100%" height="100%" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+        </div>
         <iframe src="https://open.spotify.com/embed/album/{{ new_releases_list.1.album_id }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
         <iframe src="https://open.spotify.com/embed/album/{{ new_releases_list.2.album_id }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
         <iframe src="https://open.spotify.com/embed/album/{{ new_releases_list.3.album_id }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>

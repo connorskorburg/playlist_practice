@@ -9,6 +9,13 @@
 </head>
 <body>
   <div class="container w-50 mt-5">
+    <form action="/sign_in" method="post">
+    {% csrf_token %}
+    <input type="text" name="username" class="form-control mb-2" placeholder="Username">
+      <button class="btn btn-dark">Sign In</button>
+    </form>
+  </div>
+  <div class="container w-50 mt-5">
     <form action="/search_track" method="post">
         {% csrf_token %}
         <input type="text" class="form-control mb-2" name="track" placeholder="Search For Song">
