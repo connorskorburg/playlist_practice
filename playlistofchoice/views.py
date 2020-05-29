@@ -3,6 +3,7 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import spotipy.util as util
 import sys
+from rauth import OAuth2Service
 
 # Create your views here.
 
@@ -17,10 +18,11 @@ def home(request):
 def sign_in(request):
     username = request.POST['username']
     cid = '93d03c51a99146ed992ca0175f68674b'
-    secret = '92a2119255fb489bbfe6e2a054f8c4b5'
-    client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
-    token = util.prompt_for_user_token(username, scope='playlist-modify-public', client_id=cid, client_secret=secret, redirect_uri= 'localhost:8000')
-    return redirect('/')
+    # secret = '92a2119255fb489bbfe6e2a054f8c4b5'
+    # client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
+    # token = util.prompt_for_user_token(username=username, scope='playlist-modify-public', client_id=cid, client_secret=secret, redirect_uri= 'localhost:8000', cache_path=None)
+
+    return redirect(f'https://accounts.spotify.com/authorize?response_type=code&client_id={cid}&scope=playlist-modify-public&redirect_uri=http://localhost:8000')
 
 # track results
 def track_results(request):
@@ -82,3 +84,7 @@ def new_releases(request):
         'new_releases_list': new_realeases_list
     }
     return render(request, 'new_releases.html', context)
+
+def show_lyrics(request):
+    secret = 'G5IWRkk5VKlZAilHFLawRsxIChzwPFo6KqWTQvzEnO1_jSw-XoHxmkHsnc12Q12KGPIX7qRpu5p52d2Bud0R-A'
+    client_id = 'Gi70YVXzHfuYabtUHrtCxyUWmbn6J0ZEBXy0Cb9cr0k7mM_K8GMju9poTt0NTrSV'
