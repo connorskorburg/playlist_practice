@@ -7,4 +7,6 @@ urlpatterns = [
     path('track_results', views.track_results),
     path('new_releases', views.new_releases),
     path('show_profile', views.show_profile),
+    path('get_token', views.get_token),
+    path('callback', views.callback),
 ]

@@ -3,6 +3,9 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import spotipy.util as util
 import sys
+import requests
+import base64
+import datetime
 
 # Create your views here.
 
@@ -16,12 +19,40 @@ def home(request):
 
 def sign_in(request):
     username = request.POST['username']
-    cid = '93d03c51a99146ed992ca0175f68674b'
-    # secret = '92a2119255fb489bbfe6e2a054f8c4b5'
-    # client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
-    # token = util.prompt_for_user_token(username=username, scope='playlist-modify-public', client_id=cid, client_secret=secret, redirect_uri= 'localhost:8000', cache_path=None)
+    client_id = '93d03c51a99146ed992ca0175f68674b'
+    client_secret = '92a2119255fb489bbfe6e2a054f8c4b5'
+    return redirect(f'https://accounts.spotify.com/authorize?response_type=code&client_id={client_id}&scope=playlist-modify-public&redirect_uri=http://localhost:8000/callback')
 
-    return redirect(f'https://accounts.spotify.com/authorize?response_type=code&client_id={cid}&scope=playlist-modify-public&redirect_uri=http://localhost:8000')
+def callback(request):
+    client_id = '93d03c51a99146ed992ca0175f68674b'
+    client_secret = '92a2119255fb489bbfe6e2a054f8c4b5'
+    print("REQUEST",request.GET['code'])
+    code = request.GET['code']
+    token_url =  'https://accounts.spotify.com/api/token'
+    client_creds = f"{client_id}:{client_secret}"
+    client_creds_b64 = base64.b64encode(client_creds.encode())
+    token_data = {
+        "grant_type": "authorization_code",
+        "code": code,
+        'redirect_uri': 'http://localhost:8000/callback',
+    }
+    token_headers = {
+        "Authorization": f"Basic {client_creds_b64.decode()}"
+    }
+    r = requests.post(token_url, data=token_data, headers=token_headers)
+    print(r.json())
+    print("TOKEN IS HERE:", r.json()['access_token'])
+    valid_request = r.status_code in range(200, 299)
+    if valid_request:
+        token_response_data = r.json()
+        now = datetime.datetime.now()
+        access_token = token_response_data['access_token']
+        request.session['access_token'] = access_token
+        expires_in = token_response_data['expires_in']
+        expires = now + datetime.timedelta(seconds=expires_in)
+        did_expire = expires < now
+
+    return redirect('/')
 
 # track results
 def track_results(request):
@@ -95,4 +126,6 @@ def show_profile(request):
     return render(request, 'profile.html')
 
 
-def sign_in(request)"3"
+def get_token(request):
+    code = 'AQAWfTk-j5TNXU_DFktvxjvKAfzC94If3filKM9WAA3XnLcmcHgeSg3Ji7_-QrR_mkccAXpRmocamgKQHHMPQdwiOKpmttsABbGOF_BshXU7j2Df59ro_NS8-JKr5bfs75Wj0RcB4BYtKimtig2tLtjMfxxlVCDtyWqmdhjRiqTy7iYpAVKw8vj5kCrbCV8lxQ'
+    return redirect(f'https://accounts.spotify.com/api/token&grant_type=authorization_code&code={code}&redirect_uri=http%3A%2F%2Flocalhost%3A8000')
