@@ -105,24 +105,30 @@ def get_playlists(request):
         return render(request, 'playlists.html')
 
 def create_playlist(request):
-    title = request.POST['playlist_title']
-    desc = request.POST['playlist_desc']
-    token = request.session['access_token']
-    sp = spotipy.Spotify(auth=token)
-    username = sp.current_user()['id']
-    sp.user_playlist_create(user=username, name=title, public=True, description=desc)
-    return redirect('/get_playlists')
+    if request.session['access_token']:
+        title = request.POST['playlist_title']
+        desc = request.POST['playlist_desc']
+        token = request.session['access_token']
+        sp = spotipy.Spotify(auth=token)
+        username = sp.current_user()['id']
+        sp.user_playlist_create(user=username, name=title, public=True, description=desc)
+        return redirect('/get_playlists')
+    else:
+        return redirect('/')
 
 def new_song_in_playlist(request):
-    print(request.POST)
-    track_id = request.POST['track_id']
-    track_list = [track_id]
-    playlist_id = request.POST['playlist_id']
-    token = request.session['access_token']
-    sp = spotipy.Spotify(auth=token)
-    username = sp.current_user()['id']
-    sp.user_playlist_add_tracks(user=username, playlist_id=playlist_id, tracks=track_list)
-    return redirect('/get_playlists')
+    # print(request.POST)
+    if request.session['access_token']:
+        track_id = request.POST['track_id']
+        track_list = [track_id]
+        playlist_id = request.POST['playlist_id']
+        token = request.session['access_token']
+        sp = spotipy.Spotify(auth=token)
+        username = sp.current_user()['id']
+        sp.user_playlist_add_tracks(user=username, playlist_id=playlist_id, tracks=track_list)
+        return redirect('/get_playlists')
+    else:
+        return redirect('/')
 
 # track results
 def track_results(request):

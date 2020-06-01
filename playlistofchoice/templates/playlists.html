@@ -14,7 +14,7 @@
     </div>
     <div class="p-2">
     {% for playlist in playlists_list %}
-        <div class="d-inline-block text-center">
+        <div class="d-inline-block text-center w-25">
             <h2 class="text-white">{{ playlist.name }}</h2>
             <!-- <img src="{{playlist.image}}" alt=""> -->
             <iframe src="https://open.spotify.com/embed/playlist/{{ playlist.playlist_id }}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
