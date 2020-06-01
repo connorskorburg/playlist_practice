@@ -18,11 +18,35 @@ def home(request):
     return render(request,'index.html')
 
 def sign_in(request):
-    username = request.POST['username']
-    request.session['username'] = username
     client_id = '93d03c51a99146ed992ca0175f68674b'
     client_secret = '92a2119255fb489bbfe6e2a054f8c4b5'
     return redirect(f'https://accounts.spotify.com/authorize?response_type=code&client_id={client_id}&scope=playlist-modify-public&redirect_uri=http://localhost:8000/callback')
+
+def new_playlist(request):
+    return render(request, 'new_playlist.html')
+
+def add_song_to_playlist(request, track_id):
+    if request.session['access_token']:
+        token = request.session['access_token']
+        sp = spotipy.Spotify(auth=token)
+        username = sp.current_user()['id']
+        playlists = sp.user_playlists(username)
+        playlists_list = []
+        for i in playlists['items']:
+            playlists_list.append(
+                {
+                    'name': i['name'],
+                    'description': i['description'],
+                    'playlist_id': i['id'],
+                }
+            )
+        context = {
+            'track_id': track_id,
+            'playlists_list': playlists_list,
+        }
+        return render(request, 'add_song.html', context)
+    else:
+        return redirect('/')
 
 def callback(request):
     client_id = '93d03c51a99146ed992ca0175f68674b'
@@ -57,10 +81,11 @@ def callback(request):
     return redirect('/')
 
 def get_playlists(request):
-    if request.session['username']:
+    if request.session['access_token']:
         token = request.session['access_token']
         sp = spotipy.Spotify(auth=token)
-        playlists = sp.user_playlists(request.session['username'])
+        username = sp.current_user()['id']
+        playlists = sp.user_playlists(username)
         playlists_list = []
         for i in playlists['items']:
             playlists_list.append(
@@ -68,7 +93,6 @@ def get_playlists(request):
                     'name': i['name'],
                     'description': i['description'],
                     'playlist_id': i['id'],
-                    'image': i['images'][0]['url'],
                 }
             )
         context = {
@@ -79,6 +103,27 @@ def get_playlists(request):
     else:
         request.session['username'] == False
         return render(request, 'playlists.html')
+
+def create_playlist(request):
+    title = request.POST['playlist_title']
+    desc = request.POST['playlist_desc']
+    token = request.session['access_token']
+    sp = spotipy.Spotify(auth=token)
+    username = sp.current_user()['id']
+    sp.user_playlist_create(user=username, name=title, public=True, description=desc)
+    return redirect('/get_playlists')
+
+def new_song_in_playlist(request):
+    print(request.POST)
+    track_id = request.POST['track_id']
+    track_list = [track_id]
+    playlist_id = request.POST['playlist_id']
+    token = request.session['access_token']
+    sp = spotipy.Spotify(auth=token)
+    username = sp.current_user()['id']
+    sp.user_playlist_add_tracks(user=username, playlist_id=playlist_id, tracks=track_list)
+    return redirect('/get_playlists')
+
 # track results
 def track_results(request):
     track_info_length = len(request.session['track_info_list'])
@@ -150,7 +195,3 @@ def show_profile(request):
     
     return render(request, 'profile.html')
 
-
-def get_token(request):
-    code = 'AQAWfTk-j5TNXU_DFktvxjvKAfzC94If3filKM9WAA3XnLcmcHgeSg3Ji7_-QrR_mkccAXpRmocamgKQHHMPQdwiOKpmttsABbGOF_BshXU7j2Df59ro_NS8-JKr5bfs75Wj0RcB4BYtKimtig2tLtjMfxxlVCDtyWqmdhjRiqTy7iYpAVKw8vj5kCrbCV8lxQ'
-    return redirect(f'https://accounts.spotify.com/api/token&grant_type=authorization_code&code={code}&redirect_uri=http%3A%2F%2Flocalhost%3A8000')

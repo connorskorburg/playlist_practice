@@ -7,14 +7,20 @@
   <title>One Space</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
-<body>
-    {% for playlist in playlists_list %}
-    <div class="d-inline-block">
-        <h1>{{ playlist.name }}</h1>
-        <!-- <img src="{{playlist.image}}" alt=""> -->
-        <iframe src="https://open.spotify.com/embed/playlist/{{ playlist.playlist_id }}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+<body class="bg-dark">
+    <div class="text-center">    
+        <h1 class="text-white pt-3">Your Playlists</h1> 
+        <a href="/" role="button" class="btn btn-primary">Go Home</a>
     </div>
-    {% endfor %}
+    <div class="p-2">
+    {% for playlist in playlists_list %}
+        <div class="d-inline-block text-center">
+            <h2 class="text-white">{{ playlist.name }}</h2>
+            <!-- <img src="{{playlist.image}}" alt=""> -->
+            <iframe src="https://open.spotify.com/embed/playlist/{{ playlist.playlist_id }}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 </body>
 </html>

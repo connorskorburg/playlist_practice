@@ -7,13 +7,14 @@
   <title>One Space</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
-<body>
-  <div class="container w-50 mt-5">
-    <form action="/sign_in" method="post">
+<body class="bg-dark">
+  <div class="container w-50 mt-5 pt-5">
+    <form action="/sign_in" method="post" class="d-inline-block">
     {% csrf_token %}
-    <input type="text" name="username" class="form-control mb-2" placeholder="Username">
-      <button class="btn btn-dark">Sign In</button>
+      <button class="btn btn-secondary">Sign In</button>
     </form>
+    <a href="/get_playlists" role="button" class="btn-info btn">See Playlists</a>
+    <a href="/new_playlist" role="button" class="btn-success btn">Create New Playlist</a>
   </div>
   <div class="container w-50 mt-5">
     <form action="/search_track" method="post">
