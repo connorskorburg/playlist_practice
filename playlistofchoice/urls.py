@@ -9,4 +9,5 @@ urlpatterns = [
     path('show_profile', views.show_profile),
     path('get_token', views.get_token),
     path('callback', views.callback),
+    path('get_playlists', views.get_playlists),
 ]

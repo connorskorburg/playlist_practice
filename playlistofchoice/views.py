@@ -19,6 +19,7 @@ def home(request):
 
 def sign_in(request):
     username = request.POST['username']
+    request.session['username'] = username
     client_id = '93d03c51a99146ed992ca0175f68674b'
     client_secret = '92a2119255fb489bbfe6e2a054f8c4b5'
     return redirect(f'https://accounts.spotify.com/authorize?response_type=code&client_id={client_id}&scope=playlist-modify-public&redirect_uri=http://localhost:8000/callback')
@@ -26,7 +27,7 @@ def sign_in(request):
 def callback(request):
     client_id = '93d03c51a99146ed992ca0175f68674b'
     client_secret = '92a2119255fb489bbfe6e2a054f8c4b5'
-    print("REQUEST",request.GET['code'])
+    # print("REQUEST",request.GET['code'])
     code = request.GET['code']
     token_url =  'https://accounts.spotify.com/api/token'
     client_creds = f"{client_id}:{client_secret}"
@@ -49,11 +50,35 @@ def callback(request):
         access_token = token_response_data['access_token']
         request.session['access_token'] = access_token
         expires_in = token_response_data['expires_in']
+        request.session['expires_in'] = expires_in
         expires = now + datetime.timedelta(seconds=expires_in)
         did_expire = expires < now
 
     return redirect('/')
 
+def get_playlists(request):
+    if request.session['username']:
+        token = request.session['access_token']
+        sp = spotipy.Spotify(auth=token)
+        playlists = sp.user_playlists(request.session['username'])
+        playlists_list = []
+        for i in playlists['items']:
+            playlists_list.append(
+                {
+                    'name': i['name'],
+                    'description': i['description'],
+                    'playlist_id': i['id'],
+                    'image': i['images'][0]['url'],
+                }
+            )
+        context = {
+            'playlists_list': playlists_list
+        }
+        return render(request, 'playlists.html', context)
+        
+    else:
+        request.session['username'] == False
+        return render(request, 'playlists.html')
 # track results
 def track_results(request):
     track_info_length = len(request.session['track_info_list'])
